@@ -1,8 +1,10 @@
 #include "mainwindow.h"
 #include "loggingcategories.h"
+#include "databaseoption.h"
 #include <QApplication>
 #include <QFile>
 #include <QLibraryInfo>
+#include <QTranslator>
 
 // Умный указатель на файл логирования
 QScopedPointer<QFile>   m_logFile;
@@ -13,6 +15,7 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
 
 int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
     // Устанавливаем файл логирования,
     // внимательно сверьтесь с тем, какой используете путь для файла
     m_logFile.reset(new QFile("CheckRecovery.log"));
@@ -21,8 +24,21 @@ int main(int argc, char *argv[])
     // Устанавливаем обработчик
     qInstallMessageHandler(messageHandler);
 
+#ifndef QT_NO_TRANSLATION
+    QString translatorFileName = QLatin1String("qt_");
+    translatorFileName += QLocale::system().name();
+    QTranslator *translator = new QTranslator(&a);
+    if (translator->load(translatorFileName, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        a.installTranslator(translator);
+    else
+        qWarning(logWarning()) << "Не удалось загрузить языковый файл.";
+#endif
 
-    QApplication a(argc, argv);
+
+
+    if(!connectionOptions()){
+        return 1;
+    }
 
     qInfo(logInfo()) << "Запуск програмы.";
     MainWindow w;

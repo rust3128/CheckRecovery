@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/fuel.png</file>
+    </qresource>
+</RCC>

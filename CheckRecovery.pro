@@ -30,10 +30,13 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    loggingcategories.h
+    loggingcategories.h \
+    databaseoption.h
 
 FORMS += \
         mainwindow.ui
 
-DISTFILES += \
-    SQL/database.sql
+DISTFILES +=
+
+RESOURCES += \
+    resource.qrc
