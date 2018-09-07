@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "loggingcategories.h"
+#include "terminallistdialog.h"
 #include "ui_mainwindow.h"
 #include <QSqlError>
 #include <QMessageBox>
@@ -11,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     tcpSocket = new QTcpSocket(this);
     ui->mainToolBar->hide();
-    ui->menuRec->setEnabled(false);
+    ui->groupBoxCheckType->hide();
     createStatusBar();
     ui->groupBoxTerminal->hide();
     connect(this,&MainWindow::sigShowEvent,this,&MainWindow::slotShowEvent,Qt::ConnectionType(Qt::QueuedConnection | Qt::UniqueConnection));
@@ -30,7 +31,7 @@ void MainWindow::slotShowEvent()
     connID=selectCentralDB();
     if(connCentralDB(connID)){
         ui->mainToolBar->show();
-        ui->menuRec->setEnabled(true);
+
         setModelTerminals();
         ui->groupBoxTerminal->show();
         ui->labelTerminlInfo->setText("Терминал не указан!");
@@ -183,16 +184,14 @@ void MainWindow::setModelTerminals()
                              "ORDER BY t.TERMINAL_ID",dbcenter);
 }
 
-void MainWindow::on_action_triggered()
-{
 
-}
 
 void MainWindow::on_lineEditTerminal_textChanged(const QString &arg1)
 {
     if(arg1.length()<4)
     {
         ui->labelTerminlInfo->setText("Терминал не указан!");
+        ui->groupBoxCheckType->hide();
     }
     else
     {
@@ -211,15 +210,35 @@ void MainWindow::on_lineEditTerminal_textChanged(const QString &arg1)
         {
             strTermInfo=modelTerminals->data(modelTerminals->index(idx,1)).toString();
             currentTerminal=terminal;
-            validateAZS(idx);
+            if(validateAZS(idx)) {
+                ui->groupBoxCheckType->show();
+            } else {
+                ui->groupBoxCheckType->hide();
+            }
 
         }
         else
         {
-            ui->label->hide();
+            ui->line->hide();
             ui->labelOnLineStatus->hide();
+            ui->groupBoxCheckType->hide();
         }
         ui->labelTerminlInfo->setText(strTermInfo);
     }
+
+}
+
+void MainWindow::on_toolButtonSelectTerminals_clicked()
+{
+    TerminalListDialog *termListDlg = new TerminalListDialog(modelTerminals);
+    connect(termListDlg,&TerminalListDialog::sendTerminalID,this,&MainWindow::getSelectedTerminal);
+    termListDlg->exec();
+}
+
+void MainWindow::getSelectedTerminal(int termID)
+{
+    lostCheck["TERMINAL_ID"]=termID;
+//    currentTerminal=termID;
+    ui->lineEditTerminal->setText(QString::number(termID));
 
 }

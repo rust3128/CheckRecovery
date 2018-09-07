@@ -26,15 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    loggingcategories.cpp
+    loggingcategories.cpp \
+    terminallistdialog.cpp
 
 HEADERS += \
         mainwindow.h \
     loggingcategories.h \
-    databaseoption.h
+    databaseoption.h \
+    terminallistdialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    terminallistdialog.ui
 
 DISTFILES +=
 

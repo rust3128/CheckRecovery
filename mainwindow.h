@@ -21,9 +21,9 @@ public:
 
 private slots:
     void slotShowEvent();
-    void on_action_triggered();
-
     void on_lineEditTerminal_textChanged(const QString &arg1);
+    void on_toolButtonSelectTerminals_clicked();
+    void getSelectedTerminal(int termID);
 
 signals:
     void sigShowEvent();
